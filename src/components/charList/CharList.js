@@ -15,8 +15,15 @@ const CharList = (props) => {
 
     const {loading, error, getAllCharacters} = useMarvelService();
 
+    const initMount = useRef(true);
     useEffect(() => {
-        onRequest(offset, true);
+        if (initMount.current) {
+            initMount.current = false;
+      
+            return;
+          }
+      
+          return onRequest(offset, true);
     }, [])
 
     const onRequest = (offset, initial) => {
