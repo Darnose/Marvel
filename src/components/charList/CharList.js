@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useMemo} from 'react';
 import PropTypes from 'prop-types';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 
@@ -12,16 +12,12 @@ const setContent = (process, newItemLoading, Component) => {
     switch (process) {
         case 'waiting': 
             return <Spinner/>;
-            break;
         case 'loading': 
             return newItemLoading ? <Component/> : <Spinner/>;
-            break;
         case 'confirmed':
             return <Component/>;
-            break;
         case 'error':
             return <ErrorMessage/>;
-            break;
         default:
             throw new Error('Unexpected process state');
     }
@@ -105,9 +101,13 @@ const CharList = (props) => {
         )
     }
 
+    const elements = useMemo(() => {
+        return setContent(process, newItemLoading, () => renderItems(charList))
+    }, [process])
+
     return (
         <div className="char__list">
-            {setContent(process, newItemLoading, () => renderItems(charList))}
+            {elements}
             <button 
                 disabled={newItemLoading} 
                 style={{'display' : charEnded ? 'none' : 'block'}}
